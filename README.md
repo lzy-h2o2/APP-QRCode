@@ -26,9 +26,9 @@ GitHub下载库，使用File -> new -> Import Module方式
 implementation 'cn.bertsir.zbarLibary:zbarlibary:1.4.2'
 </pre>
 注意：如果不需要尝鲜后续功能，并且保持现有稳定，建议使用指定版本号
-#### 方式三
+#### 方式三:
 
-同以上两种，只是使用__lib_QRCode__库
+同以上两种，只是使用</b>lib_QRCode</b>库
 
 
 #### 关于包的大小问题
