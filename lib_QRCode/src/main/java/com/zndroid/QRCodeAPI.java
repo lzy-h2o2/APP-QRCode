@@ -71,7 +71,10 @@ public class QRCodeAPI extends API<QRCodeAPI> {
      * 扫描二维码
      */
     public void scanQRCode(Activity activity, final CallBack callback) {
-        if (config == null) return;
+        if (config == null) {
+            showError("qrConfig not init");
+            return;
+        }
 
         showLog("scanQRCode");
 
