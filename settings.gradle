@@ -1,2 +1,3 @@
 rootProject.name='APP_QRCode'
+include ':lib_QRCode'
 include ':app'
