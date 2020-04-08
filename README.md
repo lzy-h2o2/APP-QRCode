@@ -1,4 +1,4 @@
-# APP_QRCode
+# APP-QRCode
 a common QR code lib for android of zndroid's libs
 整理以下开源库得到，多谢支持
 
