@@ -1,16 +1,10 @@
 package com.zndroid;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.text.TextUtils;
-import android.util.Base64;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import cn.bertsir.zbar.Qr.ScanResult;
 import cn.bertsir.zbar.QrConfig;
@@ -18,6 +12,9 @@ import cn.bertsir.zbar.QrManager;
 import cn.bertsir.zbar.utils.QRUtils;
 import cn.bertsir.zbar.view.ScanLineView;
 
+/**
+ * 默认只展示常用操作，更多自定义操作参见{@link QRUtils}
+ * */
 public class QRCodeAPI extends API<QRCodeAPI> {
     private QrConfig config;
 
@@ -74,6 +71,8 @@ public class QRCodeAPI extends API<QRCodeAPI> {
      * 扫描二维码
      */
     public void scanQRCode(Activity activity, final CallBack callback) {
+        if (config == null) return;
+
         showLog("scanQRCode");
 
         QrManager.getInstance().init(config).startScan(activity, new QrManager.OnScanResultCallback() {
@@ -91,26 +90,6 @@ public class QRCodeAPI extends API<QRCodeAPI> {
 
     /**
      * 生成二维码
-     *
-     * @return String base64格式的图片资源
-     * */
-    public String createQRCodeString(String origin) {
-        if (TextUtils.isEmpty(origin)) {
-            showError("params is null or empty");
-            return null;
-        }
-        showLog("createQRCode = " + origin);
-
-        Bitmap bitmap = QRUtils.getInstance().createQRCode(origin);
-
-        String base64 = QRUtils.bitmapToBase64(bitmap);
-        showLog(base64);
-        return "data:image/png;base64," + base64;
-    }
-
-    /**
-     * 生成二维码
-     * 仅限于Android原生调用
      * @return Bitmap
      * */
     public Bitmap createQRCode(String origin) {
@@ -124,112 +103,36 @@ public class QRCodeAPI extends API<QRCodeAPI> {
     }
 
     /**
-     * 生成条形码
-     * @return String base64格式的图片资源
-     */
-    public String createBarCodeString(Context context, String origin, int width, int height) {
-        if (TextUtils.isEmpty(origin)) {
+     * 生成二维码并添加logo
+     * @return Bitmap
+     * */
+    public Bitmap createQRCodeWithLogo(String origin, Bitmap bitmap) {
+        if (TextUtils.isEmpty(origin) || bitmap == null) {
             showError("params is null or empty");
             return null;
         }
-        showLog("createBarCode = " + origin);
+        showLog("createQRCodeWithLogo = " + origin);
 
-        if (width == 0) width = 400;
-        if (height == 0) height = 200;
-
-        Bitmap bitmap = QRUtils.getInstance().createBarCodeWithText(context, origin, width, height);
-
-        String base64 = QRUtils.bitmapToBase64(bitmap);
-        showLog(base64);
-        return "data:image/png;base64," + base64;
+        return QRUtils.getInstance().createQRCodeAddLogo(origin, bitmap);
     }
 
     /**
      * 生成条形码
      * @return String base64格式的图片资源
      */
-    public Bitmap createBarCode(Context context, String origin, int width, int height) {
+    public Bitmap createBarCodeWithText(Context context, String origin, int width, int height) {
         if (TextUtils.isEmpty(origin)) {
             showError("params is null or empty");
             return null;
         }
         showLog("createBarCode = " + origin);
 
-        if (width == 0) width = 400;
-        if (height == 0) height = 200;
+        if (width <= 0) width = 400;
+        if (height <= 0) height = 200;
 
-        return QRUtils.getInstance().createBarCodeWithText(context, origin, width, height);
-    }
+        QRUtils.TextViewConfig textViewConfig = new QRUtils.TextViewConfig();
+        textViewConfig.setSize(16f);
 
-    /**
-     * bitmap转base64
-     *
-     * @param @param  bitmap
-     * @param @return 设定文件
-     * @return String    返回类型
-     * @throws
-     * @Title: bitmapToBase64
-     */
-    @SuppressLint("NewApi")
-    public static String bitmapToBase64(Bitmap bitmap) {
-
-        // 要返回的字符串
-        String reslut = null;
-
-        ByteArrayOutputStream baos = null;
-
-        try {
-
-            if (bitmap != null) {
-
-                baos = new ByteArrayOutputStream();
-                /**
-                 * 压缩只对保存有效果bitmap还是原来的大小
-                 */
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
-
-                baos.flush();
-                baos.close();
-                // 转换为字节数组
-                byte[] byteArray = baos.toByteArray();
-
-                // 转换为字符串
-                reslut = Base64.encodeToString(byteArray, Base64.DEFAULT);
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-
-            try {
-                if (baos != null) {
-                    baos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-        return reslut;
-
-    }
-
-    /**
-     * base64转bitmap
-     *
-     * @param @param  base64String
-     * @param @return 设定文件
-     * @return Bitmap    返回类型
-     * @throws
-     * @Title: base64ToBitmap
-     */
-    public static Bitmap base64ToBitmap(String base64String) {
-
-        byte[] decode = Base64.decode(base64String, Base64.DEFAULT);
-
-        Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
-
-        return bitmap;
+        return QRUtils.getInstance().createBarCodeWithText(context, origin, width, height, textViewConfig);
     }
 }

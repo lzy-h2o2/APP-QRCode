@@ -71,8 +71,6 @@ public class QRUtils {
         return instance;
     }
 
-
-
     /**
      * 识别本地二维码
      *
@@ -121,8 +119,6 @@ public class QRUtils {
         barcodeBmp.recycle();
         return qrCodeString;
     }
-
-
 
     /**
      * 扫描二维码图片的方法
@@ -189,7 +185,6 @@ public class QRUtils {
         }
 
     }
-
 
     /**
      * 识别本地条形码
